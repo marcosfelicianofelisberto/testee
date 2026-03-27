@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Estoque</title>
+<style>
+body { font-family: Arial; padding: 20px; }
+h2 { margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+th, td { border: 1px solid #ccc; padding: 8px; }
+td[contenteditable] { background: #f9f9f9; }
+button { padding: 10px; margin: 10px 0; }
+</style>
+</head>
+<body>
+
+<h1>📦 Controle de Estoque</h1>
+<button onclick="salvar()">Salvar</button>
+
+<div id="conteudo"></div>
+
+<script>
+let dados = JSON.parse(localStorage.getItem("estoque")) || [
+
+{categoria:"Carnes Temperadas", produto:"Pernil Temperado Fama", quantidade:226.300},
+{categoria:"Carnes Temperadas", produto:"Barrigueira com Pele Temp", quantidade:8.800},
+{categoria:"Carnes Temperadas", produto:"Lombo Temp", quantidade:65.000},
+{categoria:"Carnes Temperadas", produto:"Bisteca Temp Fama", quantidade:8.000},
+{categoria:"Carnes Temperadas", produto:"Costela Temp Hot Line", quantidade:28.600},
+{categoria:"Carnes Temperadas", produto:"Pernil Sem Osso Temp Fama", quantidade:40.000},
+{categoria:"Carnes Temperadas", produto:"Paleta Temperada", quantidade:162.230},
+{categoria:"Carnes Temperadas", produto:"Sobrepaleta Temp", quantidade:46.000},
+{categoria:"Carnes Temperadas", produto:"Filé Temp", quantidade:44.000},
+{categoria:"Carnes Temperadas", produto:"Picanha Temperada", quantidade:5.000},
+
+{categoria:"Defumados", produto:"Linguiça Calabresa", quantidade:59.550},
+{categoria:"Defumados", produto:"Salsicha Pré Cozida", quantidade:12.000},
+{categoria:"Defumados", produto:"Bacon em Cubos", quantidade:97.885},
+{categoria:"Defumados", produto:"Linguiça Blumenau", quantidade:17.000},
+{categoria:"Defumados", produto:"Kit Feijoada Fama", quantidade:21.800},
+{categoria:"Defumados", produto:"Bacon de Pernil Fama", quantidade:103.600},
+{categoria:"Defumados", produto:"Lombo Defumado Hotline", quantidade:40.685},
+{categoria:"Defumados", produto:"Costela Defumada Hotline", quantidade:40.000},
+{categoria:"Defumados", produto:"Lombo Canadense", quantidade:28.000},
+
+{categoria:"Carnes In Natura", produto:"Carcaça", quantidade:22.000},
+{categoria:"Carnes In Natura", produto:"Costela Normal", quantidade:35.540},
+{categoria:"Carnes In Natura", produto:"Pernil com Pele", quantidade:114.000},
+{categoria:"Carnes In Natura", produto:"Lombo Normal", quantidade:79.000},
+
+{categoria:"Banharia", produto:"Torresmo Misto", quantidade:47.000},
+{categoria:"Banharia", produto:"Torresmo Puro Fama", quantidade:15.800},
+{categoria:"Banharia", produto:"Torresmo Pururuca Especial", quantidade:53.600},
+{categoria:"Banharia", produto:"Banha", quantidade:52.400}
+
+];
+
+function renderizar() {
+  const container = document.getElementById("conteudo");
+  container.innerHTML = "";
+
+  const categorias = [...new Set(dados.map(d => d.categoria))];
+
+  categorias.forEach(cat => {
+    const titulo = `<h2>${cat}</h2>`;
+    let tabela = `<table><tr><th>Produto</th><th>Quantidade</th></tr>`;
+
+    dados
+      .filter(d => d.categoria === cat)
+      .forEach((item, i) => {
+        const index = dados.indexOf(item);
+        tabela += `
+        <tr>
+          <td contenteditable oninput="editar(${index}, 'produto', this.innerText)">
+            ${item.produto}
+          </td>
+          <td contenteditable oninput="editar(${index}, 'quantidade', this.innerText)">
+            ${item.quantidade}
+          </td>
+        </tr>`;
+      });
+
+    tabela += "</table>";
+    container.innerHTML += titulo + tabela;
+  });
+}
+
+function editar(index, campo, valor) {
+  dados[index][campo] = valor;
+}
+
+function salvar() {
+  localStorage.setItem("estoque", JSON.stringify(dados));
+  alert("Estoque salvo!");
+}
+
+renderizar();
+</script>
+
+</body>
+</html>
